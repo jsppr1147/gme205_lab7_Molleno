@@ -12,6 +12,10 @@ Part B: Connecting and Writing a parametrize function
 - Implemented `DB_CONFIG`, `check_connection()`, and `fetch_parcels_by_land_use()` in `src/database.py`
 - updated run_lab7.py for connection checking.
 - Connection check: <result>
-    > Connection successful.
-    > Database: gme205
-    > PostGIS: 3.6 USE_GEOS=1 USE_PROJ=1 USE_STATS=1
+    > Connection successful.  
+    > Database: gme205  
+    > PostGIS: 3.6 USE_GEOS=1 USE_PROJ=1 USE_STATS=1  
+- updated run_lab7.py for land_use query
+- Query for "Residential" returned 2 rows
+- First row: P-001, Residential, polygon transformed to EPSG:4326 (lon ≈ 118.511, lat ≈ 0)
+- land_use is passed as a separate parameter (`%s`), not inserted into the SQL text
