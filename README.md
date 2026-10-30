@@ -28,6 +28,90 @@ Part C: Converting Rows to PArcel
 
 Part D: Creating GeoJSON Exchange 
 - Implemented `build_feature_collection()` and `validate_feature_collection()` in `src/exchange.py`
-- FeatureCollection built with <n> features
-- Contract check: <PASSED/FAILED>
+- FeatureCollection built with 2 features
+- Contract check:
+    - PASSED
+    First feature: {
+        "type": "Feature",
+        "id": "P-001",
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": [[[
+          118.511256116,
+          0],
+        [
+          118.512152016,
+          0
+        ],
+        [
+          118.512152015,
+          0.000901939
+        ],
+        [
+          118.511256115,
+          0.000901938
+        ],
+        [
+          118.511256116,
+          0
+        ]]]},
+        "properties": {
+            "parcel_id": "P-001",
+            "land_use": "Residential"}}
+    GeoJSON contract check: PASSED
+
 - Also,tested the validator by removing a feature id: it raised "Feature is missing id".
+    - Failed
+    Rows returned: 2
+    Parcel objects created: 2
+    GeoJSON type: FeatureCollection
+    Feature count: 2
+    First feature: {
+        "type": "Feature",
+        "id": "P-001",
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": [[[
+          118.511256116,
+          0
+        ],
+        [
+          118.512152016,
+          0
+        ],
+        [
+          118.512152015,
+          0.000901939
+        ],
+        [
+          118.511256115,
+          0.000901938
+        ],
+        [
+          118.511256116,
+          0]]]},
+          "properties": {
+            "parcel_id": "P-001",
+            "land_use": "Residential"}}
+    GeoJSON contract check: FAILED
+    Feature is missing id  
+
+Part E: Integrating the Workflow and Writing the output
+- Completed `src/run_lab7.py` as the workflow runner: connection → query → objects → FeatureCollection → validation → file
+- Generated `output/residential_parcels.geojson` with 2 features (P-001, P-002)
+- Loaded the file in QGIS: yes. Screenshot located in output/QGIS_input.png
+
+"""
+Connection successful.
+Database: gme205
+PostGIS: 3.6 USE_GEOS=1 USE_PROJ=1 USE_STATS=1
+Rows returned: 2
+First database row: ('P-001', 'Residential', '{"type":"Polygon","coordinates":[[[118.511256116,0],[118.512152016,0],[118.512152015,0.000901939],[118.511256115,0.000901938],[118.511256116,0]]]}')
+Parcel objects created: 2
+First Parcel object: P-001 Residential
+GeoJSON type: FeatureCollection
+Feature count: 2
+GeoJSON contract check: PASSED
+Output written: output\residential_parcels.geojson
+File exists: True
+"""

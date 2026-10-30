@@ -1,35 +1,55 @@
 import json
+from pathlib import Path
 
-from database import fetch_parcels_by_land_use
+from database import check_connection, fetch_parcels_by_land_use
 from exchange import build_feature_collection, validate_feature_collection
 from spatial import Parcel
 
-rows = fetch_parcels_by_land_use("Residential")
-print("Rows returned:", len(rows))
+OUTPUT_PATH = Path("output/residential_parcels.geojson")
 
-parcels = [
-    Parcel.from_row(row)
-    for row in rows
-]
-print("Parcel objects created:", len(parcels))
 
-collection = build_feature_collection(parcels)
-print("GeoJSON type:", collection["type"])
-print("Feature count:", len(collection["features"]))
+def main():
+    # 1. Confirm Python can reach PostgreSQL/PostGIS.
+    if not check_connection():
+        return
 
-if collection["features"]:
-    print(
-        "First feature:",
-        json.dumps(
-            collection["features"][0],
-            indent=2,
-        ),
-    )
-# Uncomment the following line to test a failing case for the GeoJSON contract validation    
-#collection["features"][0]["id"] = None
-try:
+    # 2. Retrieve selected database rows.
+    rows = fetch_parcels_by_land_use("Residential")
+    print("Rows returned:", len(rows))
+    if rows:
+        print("First database row:", rows[0])
+
+    # 3. Convert rows into domain objects.
+    parcels = [
+        Parcel.from_row(row)
+        for row in rows
+    ]
+    print("Parcel objects created:", len(parcels))
+    if parcels:
+        print(
+            "First Parcel object:",
+            parcels[0].parcel_id,
+            parcels[0].land_use,
+        )
+
+    # 4. Build the exchange representation.
+    collection = build_feature_collection(parcels)
+    print("GeoJSON type:", collection["type"])
+    print("Feature count:", len(collection["features"]))
+
+    # 5. Validate the minimum contract.
     validate_feature_collection(collection)
     print("GeoJSON contract check: PASSED")
-except ValueError as error:
-    print("GeoJSON contract check: FAILED")
-    print(error)
+
+    # 6. Write the final exchange file.
+    OUTPUT_PATH.parent.mkdir(exist_ok=True)
+    OUTPUT_PATH.write_text(
+        json.dumps(collection, indent=2),
+        encoding="utf-8",
+    )
+    print("Output written:", OUTPUT_PATH)
+    print("File exists:", OUTPUT_PATH.exists())
+
+
+if __name__ == "__main__":
+    main()
