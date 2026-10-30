@@ -25,3 +25,9 @@ Part C: Converting Rows to PArcel
 - `from_row()` converts the GeoJSON string in the row into a Python dict  
 - 2 database rows converted into 2 Parcel objects  
 - First object: P-001, Residential  
+
+Part D: Creating GeoJSON Exchange 
+- Implemented `build_feature_collection()` and `validate_feature_collection()` in `src/exchange.py`
+- FeatureCollection built with <n> features
+- Contract check: <PASSED/FAILED>
+- Also,tested the validator by removing a feature id: it raised "Feature is missing id".
