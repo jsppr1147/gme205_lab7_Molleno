@@ -18,4 +18,10 @@ Part B: Connecting and Writing a parametrize function
 - updated run_lab7.py for land_use query
 - Query for "Residential" returned 2 rows
 - First row: P-001, Residential, polygon transformed to EPSG:4326 (lon ≈ 118.511, lat ≈ 0)
-- land_use is passed as a separate parameter (`%s`), not inserted into the SQL text
+- land_use is passed as a separate parameter (`%s`), not inserted into the SQL text  
+
+Part C: Converting Rows to PArcel
+ - Implemented the `Parcel` class in `src/spatial.py` with `from_row()` and `to_feature()`  
+- `from_row()` converts the GeoJSON string in the row into a Python dict  
+- 2 database rows converted into 2 Parcel objects  
+- First object: P-001, Residential  
