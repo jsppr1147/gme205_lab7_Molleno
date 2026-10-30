@@ -115,3 +115,17 @@ GeoJSON contract check: PASSED
 Output written: output\residential_parcels.geojson
 File exists: True
 """
+
+Part F: Reflections
+
+1. The database handles the spatial work and filtering. It selects matching rows by land use, transforms coordinates to EPSG:4326 using ST_Transform, and formats them as GeoJSON with ST_AsGeoJSON. Python just gets clean results and does not need to handle raw geometry types.
+
+2. Using parameterized queries (%s) passes the filter value separately from the SQL statement. The database treats the input purely as plain data, preventing SQL injection and avoiding syntax crashes if a string contains quotes or special characters. F-strings directly inject raw text into the query, leaving it vulnerable. 
+
+3. Executing a query returns a raw tuple which forces the user to reference fields by index (row[0]). Mapping it into a Parcel class assigns explicit property names (parcel_id, land_use, geometry) and parses the raw JSON geometry string into a native Python dictionary.
+
+4. The method reformats the Parcel instance into standard GeoJSON schema (type, id, geometry, properties). This creates a universal JSON dictionary that external web maps or GIS applications can read without knowing anything about the Parcel class.
+
+5. The database keeps spatial data in its local metric projection (UTM Zone 51N / EPSG:32651) for accurate measurements. The GeoJSON specification (RFC 7946) requires coordinates in WGS 84 (EPSG:4326), so transforming the data on export ensures compliance while keeping the stored spatial data intact.
+
+6. Interoperability means external applications can process your data without needing to know your database schema or backend code. Since GeoJSON is an open industry standard, software like QGIS can render the exported file directly, whether it's downloaded locally or served over an API.
